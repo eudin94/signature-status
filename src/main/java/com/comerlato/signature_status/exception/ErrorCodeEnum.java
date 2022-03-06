@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum ErrorCodeEnum {
 
     ERROR_GENERIC_EXCEPTION("error.generic.exception"),
-    ERROR_DUPLICATED_FIELD("error.duplicated.field");
+    ERROR_DUPLICATED_FIELD("error.duplicated.field"),
+    ERROR_STATUS_NOT_FOUND("error.status.not.found");
 
     private final String messageKey;
 }

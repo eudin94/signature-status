@@ -28,3 +28,6 @@ CREATE TABLE IF NOT EXISTS event_history
     PRIMARY KEY (id),
     FOREIGN KEY (subscription_id) REFERENCES subscription(id)
 );
+
+--changeset eduardo.comerlato:4
+INSERT INTO status(name) VALUES ('ACTIVE'), ('INACTIVE');
