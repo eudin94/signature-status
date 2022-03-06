@@ -1,0 +1,30 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    container_name: voting_challenge
+    image: library/postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "signature_status"
+    ports:
+      - "3210:5432"
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d/
+
+  rabbitmq:
+    container_name: rabbit_mq
+    image: library/rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+    networks:
+      - rabbitmq_go_net
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
