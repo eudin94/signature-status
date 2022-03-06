@@ -4,7 +4,6 @@ import com.comerlato.signature_status.enums.EventTypeEnum;
 import lombok.*;
 
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 
 import static javax.persistence.EnumType.STRING;
@@ -24,6 +23,6 @@ public class EventHistory {
     private Long id;
     @Enumerated(STRING)
     private EventTypeEnum type;
-    private Long subscriptionId;
+    private String subscriptionId;
     private LocalDateTime createdAt;
 }
