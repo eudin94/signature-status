@@ -6,7 +6,7 @@ server:
   spring.url: ${SERVER_SPRING_URL:localhost:8095}
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:4321/signature_status?currentSchema=public}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:3210/signature_status?currentSchema=public}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:123}
     driverClassName: org.postgresql.Driver

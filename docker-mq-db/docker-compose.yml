@@ -4,7 +4,7 @@ version: '3.1'
 services:
 
   db:
-    container_name: voting_challenge
+    container_name: signature_status_db
     image: library/postgres:13
     restart: always
     environment:
@@ -17,11 +17,11 @@ services:
       - ./initdb:/docker-entrypoint-initdb.d/
 
   rabbitmq:
-    container_name: rabbit_mq
+    container_name: signature_status_mq
     image: library/rabbitmq
     restart: always
     ports:
-      - "5672:5672"
+      - "3211:5672"
     networks:
       - rabbitmq_go_net
 

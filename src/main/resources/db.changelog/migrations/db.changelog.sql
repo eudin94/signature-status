@@ -1,2 +1,1 @@
 --liquibase formatted sql
---changeset eduardo.comerlato:1
