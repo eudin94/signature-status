@@ -24,7 +24,7 @@ public class StatusSpecification implements Specification<Status> {
     @Override
     public Predicate toPredicate(Root<Status> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         final var predicates = new ArrayList<Predicate>();
-        name.ifPresent(s -> predicates.add(builder.like(builder.lower(root.get("name")), "%" + s.name().toLowerCase() + "%")));
+        name.ifPresent(s -> predicates.add(root.get("name").in(s)));
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 }

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class SubscriptionCreateRequestDTO {
 
     @NotBlank
-    String Id;
+    String id;
     @NotNull
     StatusEnum status;
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class EventHistoryDTO {
 
-    Long Id;
+    Long id;
     EventTypeEnum type;
     SubscriptionDTO subscription;
     LocalDateTime createdAt;

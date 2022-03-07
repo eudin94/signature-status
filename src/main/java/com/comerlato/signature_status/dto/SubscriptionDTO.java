@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class SubscriptionDTO {
 
-    String Id;
+    String id;
     Status status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

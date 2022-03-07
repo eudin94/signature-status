@@ -12,6 +12,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 public class StatusDTO {
 
-    Long Id;
+    Long id;
     StatusEnum name;
 }

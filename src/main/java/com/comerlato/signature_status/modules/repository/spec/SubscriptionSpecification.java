@@ -25,8 +25,12 @@ public class SubscriptionSpecification implements Specification<Subscription> {
     @Override
     public Predicate toPredicate(Root<Subscription> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         final var predicates = new ArrayList<Predicate>();
-        final var status = query.from(Status.class);
-        statusEnum.ifPresent(s -> predicates.add(status.get("name").in(s)));
+        statusEnum.ifPresent(s -> {
+            final var status = query.from(Status.class);
+            predicates.add(builder.equal(status.get("id"), root.get("statusId")));
+            predicates.add(status.get("name").in(s));
+        });
+
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 }
