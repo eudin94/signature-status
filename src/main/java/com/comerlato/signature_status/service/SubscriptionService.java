@@ -17,8 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_SUBSCRIPTION_ALREADY_EXISTS;
-import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_UNCHANGED_STATUS;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.*;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.subscriptionMapper;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -67,8 +66,8 @@ public class SubscriptionService {
 
     private Subscription findById(final String id) {
         return repository.findById(id).orElseThrow(() -> {
-            log.error(messageHelper.get(ERROR_SUBSCRIPTION_ALREADY_EXISTS, id));
-            throw new ResponseStatusException(BAD_REQUEST, messageHelper.get(ERROR_SUBSCRIPTION_ALREADY_EXISTS, id));
+            log.error(messageHelper.get(ERROR_SUBSCRIPTION_NOT_FOUND, id));
+            throw new ResponseStatusException(BAD_REQUEST, messageHelper.get(ERROR_SUBSCRIPTION_NOT_FOUND, id));
         });
     }
 
