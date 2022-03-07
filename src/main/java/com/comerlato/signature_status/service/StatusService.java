@@ -1,5 +1,6 @@
 package com.comerlato.signature_status.service;
 
+import com.comerlato.signature_status.dto.StatusDTO;
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.modules.entity.Status;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_ID_NOT_FOUND;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_NAME_NOT_FOUND;
+import static com.comerlato.signature_status.util.mapper.MapperConstants.statusMapper;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -26,10 +28,15 @@ public class StatusService {
     private final StatusRepository repository;
     private final MessageHelper messageHelper;
 
-    public Page<Status> findAll(final Optional<StatusEnum> name, final Pageable pageable) {
+    public Page<StatusDTO> findAll(final Optional<StatusEnum> name, final Pageable pageable) {
         return repository.findAll(StatusSpecification.builder()
                 .name(name)
-                .build(), pageable);
+                .build(), pageable)
+                .map(statusMapper::buildStatusDTO);
+    }
+
+    public StatusDTO findDTOByID(final Long id) {
+        return statusMapper.buildStatusDTO(findById(id));
     }
 
     public Status findById(final Long id) {
