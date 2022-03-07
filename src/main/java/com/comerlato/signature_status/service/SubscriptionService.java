@@ -11,7 +11,6 @@ import com.comerlato.signature_status.modules.repository.spec.SubscriptionSpecif
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,11 +54,10 @@ public class SubscriptionService {
                                          final Pageable pageable) {
         return repository.findAll(SubscriptionSpecification.builder()
                 .statusEnum(status)
-                .build(), pageable)
-                .map(this::buildSubscriptionDTO);
+                .build(), pageable).map(this::buildSubscriptionDTO);
     }
 
-    private SubscriptionDTO findDTOById(final String id) {
+    public SubscriptionDTO findDTOById(final String id) {
         return buildSubscriptionDTO(findById(id));
     }
 

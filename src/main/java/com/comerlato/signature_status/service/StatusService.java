@@ -31,8 +31,7 @@ public class StatusService {
     public Page<StatusDTO> findAll(final Optional<StatusEnum> name, final Pageable pageable) {
         return repository.findAll(StatusSpecification.builder()
                 .name(name)
-                .build(), pageable)
-                .map(statusMapper::buildStatusDTO);
+                .build(), pageable).map(statusMapper::buildStatusDTO);
     }
 
     public StatusDTO findDTOByID(final Long id) {

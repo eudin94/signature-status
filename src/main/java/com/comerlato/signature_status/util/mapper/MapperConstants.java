@@ -9,5 +9,5 @@ public class MapperConstants {
 
     public static final StatusMapper statusMapper = Mappers.getMapper(StatusMapper.class);
     public static final SubscriptionMapper subscriptionMapper = Mappers.getMapper(SubscriptionMapper.class);
-
+    public static final EventHistoryMapper eventHistoryMapper= Mappers.getMapper(EventHistoryMapper.class);
 }
