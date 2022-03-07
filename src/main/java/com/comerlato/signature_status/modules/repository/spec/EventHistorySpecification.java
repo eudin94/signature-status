@@ -27,7 +27,7 @@ public class EventHistorySpecification implements Specification<EventHistory> {
     @Override
     public Predicate toPredicate(Root<EventHistory> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         final var predicates = new ArrayList<Predicate>();
-        type.ifPresent(s -> predicates.add(builder.like(builder.lower(root.get("type")), "%" + s.name().toLowerCase() + "%")));
+        type.ifPresent(s -> predicates.add(root.get("type").in(s)));
         subscriptionsIds.ifPresent(s -> predicates.add(root.get("subscriptionId").in(s)));
         return builder.and(predicates.toArray(new Predicate[0]));
     }
