@@ -14,7 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_NOT_FOUND;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_ID_NOT_FOUND;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_NAME_NOT_FOUND;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class StatusService {
     private final StatusRepository repository;
     private final MessageHelper messageHelper;
 
-    public Page<Status> findAll(final Optional<String> name, final Pageable pageable) {
+    public Page<Status> findAll(final Optional<StatusEnum> name, final Pageable pageable) {
         return repository.findAll(StatusSpecification.builder()
                 .name(name)
                 .build(), pageable);
@@ -33,8 +34,15 @@ public class StatusService {
 
     public Status findById(final Long id) {
         return repository.findById(id).orElseThrow(() -> {
-            log.error(messageHelper.get(ERROR_STATUS_NOT_FOUND, id.toString()));
-            throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_STATUS_NOT_FOUND, id.toString()));
+            log.error(messageHelper.get(ERROR_STATUS_ID_NOT_FOUND, id.toString()));
+            throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_STATUS_ID_NOT_FOUND, id.toString()));
+        });
+    }
+
+    public Status findByName(final StatusEnum name) {
+        return repository.findByName(name).orElseThrow(() -> {
+            log.error(messageHelper.get(ERROR_STATUS_NAME_NOT_FOUND, name.name()));
+            throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_STATUS_NAME_NOT_FOUND, name.name()));
         });
     }
 }

@@ -2,6 +2,7 @@ package com.comerlato.signature_status.modules.repository.spec;
 
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.modules.entity.Status;
+import com.comerlato.signature_status.modules.entity.Subscription;
 import lombok.Builder;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -15,16 +16,17 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 
 @Builder
-public class StatusSpecification implements Specification<Status> {
+public class SubscriptionSpecification implements Specification<Subscription> {
 
     @Builder.Default
-    private final transient Optional<StatusEnum> name = empty();
+    private final transient Optional<StatusEnum> statusEnum = empty();
 
 
     @Override
-    public Predicate toPredicate(Root<Status> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<Subscription> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         final var predicates = new ArrayList<Predicate>();
-        name.ifPresent(s -> predicates.add(builder.like(builder.lower(root.get("name")), "%" + s.name().toLowerCase() + "%")));
+        final var status = query.from(Status.class);
+        statusEnum.ifPresent(s -> predicates.add(status.get("name").in(s)));
         return builder.and(predicates.toArray(new Predicate[0]));
     }
 }
