@@ -38,10 +38,10 @@ public class SubscriptionResource {
     @ResponseStatus(OK)
     @Operation(summary = "Find all subscriptions", responses = {@ApiResponse(responseCode = "200")})
     public Page<SubscriptionDTO> findAll(@RequestParam(required = false) final Optional<StatusEnum> status,
-                                         @RequestParam(required = false) final Integer page,
-                                         @RequestParam(required = false) final Integer size,
-                                         @RequestParam(required = false) final String sort,
-                                         @RequestParam(required = false) final Sort.Direction direction) {
+                                         @RequestParam(defaultValue = "0") final Integer page,
+                                         @RequestParam(defaultValue = "10") final Integer size,
+                                         @RequestParam(defaultValue = "id") final String sort,
+                                         @RequestParam(defaultValue = "ASC") final Sort.Direction direction) {
         return service.findAll(status, PageRequest.of(page, size, Sort.by(direction, sort)));
     }
 
