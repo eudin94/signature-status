@@ -15,11 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_SUBSCRIPTION_ALREADY_EXISTS;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_UNCHANGED_STATUS;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.subscriptionMapper;
+import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RequiredArgsConstructor
@@ -41,7 +42,10 @@ public class SubscriptionService {
     public SubscriptionDTO update(final SubscriptionUpdateRequestDTO request) {
         final var subscription = findById(request.getId());
         final var status = statusService.findByName(request.getStatus());
-        final var updatedSubscription = repository.save(subscription.withStatusId(status.getId()));
+        validateStatus(subscription.getStatusId(), status.getId());
+        final var updatedSubscription = repository.save(
+                subscription.withStatusId(status.getId()).withUpdatedAt(now())
+        );
         return buildSubscriptionDTO(updatedSubscription);
     }
 
@@ -75,12 +79,19 @@ public class SubscriptionService {
         });
     }
 
+    private void validateStatus(final Long oldStatusId, final Long newStatusId) {
+        if (oldStatusId.equals(newStatusId)) {
+            log.error(messageHelper.get(ERROR_UNCHANGED_STATUS));
+            throw new ResponseStatusException(BAD_REQUEST, messageHelper.get(ERROR_UNCHANGED_STATUS));
+        }
+    }
+
     private Subscription buildSubscription(final String id,
                                            final Long statusId) {
         return Subscription.builder()
                 .id(id)
                 .statusId(statusId)
-                .createdAt(LocalDateTime.now())
+                .createdAt(now())
                 .build();
     }
 
@@ -88,4 +99,5 @@ public class SubscriptionService {
         return subscriptionMapper.buildSubscriptionDTO(subscription)
                 .withStatus(statusService.findById(subscription.getStatusId()));
     }
+
 }

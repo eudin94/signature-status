@@ -1,6 +1,6 @@
 server:
   port: ${SERVER_PORT:8095}
-  servlet.context-path: ${SERVER_CONTEXT-PATH:/api/signature_status}
+  servlet.context-path: ${SERVER_CONTEXT-PATH:/api/signature-status}
   compression.enabled: true
   error.include-message: always
   spring.url: ${SERVER_SPRING_URL:localhost:8095}
