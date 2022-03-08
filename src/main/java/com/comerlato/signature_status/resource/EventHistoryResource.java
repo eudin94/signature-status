@@ -29,7 +29,7 @@ public class EventHistoryResource {
     @ResponseStatus(OK)
     @Operation(summary = "Find all events", responses = {@ApiResponse(responseCode = "200")})
     public Page<EventHistoryDTO> findAll(@RequestParam(required = false) final Optional<EventTypeEnum> type,
-                                         @RequestParam(required = false) final Optional<List<Long>> subscriptionsIds,
+                                         @RequestParam(required = false) final Optional<List<String>> subscriptionsIds,
                                          @RequestParam(defaultValue = "0") final Integer page,
                                          @RequestParam(defaultValue = "10") final Integer size,
                                          @RequestParam(defaultValue = "id") final String sort,

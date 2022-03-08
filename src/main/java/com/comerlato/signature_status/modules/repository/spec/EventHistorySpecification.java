@@ -21,7 +21,7 @@ public class EventHistorySpecification implements Specification<EventHistory> {
     @Builder.Default
     private final transient Optional<EventTypeEnum> type = empty();
     @Builder.Default
-    private final transient Optional<List<Long>> subscriptionsIds = empty();
+    private final transient Optional<List<String>> subscriptionsIds = empty();
 
 
     @Override

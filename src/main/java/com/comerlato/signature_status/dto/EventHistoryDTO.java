@@ -16,6 +16,6 @@ public class EventHistoryDTO {
 
     Long id;
     EventTypeEnum type;
-    Long subscriptionId;
+    String subscriptionId;
     LocalDateTime createdAt;
 }

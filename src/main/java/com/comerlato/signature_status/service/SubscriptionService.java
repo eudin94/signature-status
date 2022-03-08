@@ -1,7 +1,7 @@
 package com.comerlato.signature_status.service;
 
-import com.comerlato.signature_status.dto.SubscriptionRequestDTO;
 import com.comerlato.signature_status.dto.SubscriptionDTO;
+import com.comerlato.signature_status.dto.SubscriptionRequestDTO;
 import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.helper.MessageHelper;

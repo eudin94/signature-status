@@ -40,7 +40,7 @@ public class EventHistoryService {
     }
 
     public Page<EventHistoryDTO> findAll(final Optional<EventTypeEnum> type,
-                                         final Optional<List<Long>> subscriptionsIds,
+                                         final Optional<List<String>> subscriptionsIds,
                                          final Pageable pageable) {
         return repository.findAll(EventHistorySpecification.builder()
                 .type(type)

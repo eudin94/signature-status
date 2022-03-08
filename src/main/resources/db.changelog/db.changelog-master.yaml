@@ -2,6 +2,3 @@ databaseChangeLog:
   - include:
       file: migrations/db.changelog.sql
       relativeToChangelogFile: true
-  - include:
-      file: migrations/db.changelog-dump.sql
-      relativeToChangelogFile: true
