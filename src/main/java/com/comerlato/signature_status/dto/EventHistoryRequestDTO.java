@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @With
 @Jacksonized
 @Builder
-public class EventHistoryCreateRequestDTO {
+public class EventHistoryRequestDTO {
 
     @NotNull
     EventTypeEnum type;

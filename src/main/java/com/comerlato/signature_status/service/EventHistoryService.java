@@ -1,7 +1,7 @@
 package com.comerlato.signature_status.service;
 
-import com.comerlato.signature_status.dto.EventHistoryCreateRequestDTO;
 import com.comerlato.signature_status.dto.EventHistoryDTO;
+import com.comerlato.signature_status.dto.EventHistoryRequestDTO;
 import com.comerlato.signature_status.dto.SubscriptionDTO;
 import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.helper.MessageHelper;
@@ -31,7 +31,7 @@ public class EventHistoryService {
     private final EventHistoryRepository repository;
     private final MessageHelper messageHelper;
 
-    public void create(final EventHistoryCreateRequestDTO request) {
+    public void create(final EventHistoryRequestDTO request) {
         repository.save(
                 eventHistoryMapper.buildEventHistory(request)
                         .withSubscriptionId(request.getSubscriptionDTO().getId())
@@ -52,9 +52,9 @@ public class EventHistoryService {
         return eventHistoryMapper.buildEventHistoryDTO(findById(id));
     }
 
-    public EventHistoryCreateRequestDTO buildCreateRequestDTO(final EventTypeEnum type,
-                                                              final SubscriptionDTO subscriptionDTO) {
-        return EventHistoryCreateRequestDTO.builder()
+    public EventHistoryRequestDTO buildCreateRequestDTO(final EventTypeEnum type,
+                                                        final SubscriptionDTO subscriptionDTO) {
+        return EventHistoryRequestDTO.builder()
                 .type(type)
                 .subscriptionDTO(subscriptionDTO)
                 .build();
