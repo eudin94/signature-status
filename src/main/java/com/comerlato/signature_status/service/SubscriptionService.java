@@ -1,8 +1,8 @@
 package com.comerlato.signature_status.service;
 
-import com.comerlato.signature_status.dto.SubscriptionCreateRequestDTO;
+import com.comerlato.signature_status.dto.SubscriptionRequestDTO;
 import com.comerlato.signature_status.dto.SubscriptionDTO;
-import com.comerlato.signature_status.dto.SubscriptionUpdateRequestDTO;
+import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.modules.entity.Subscription;
@@ -34,14 +34,22 @@ public class SubscriptionService {
     private final TransactionTemplate transaction;
     private final MessageHelper messageHelper;
 
-    public SubscriptionDTO create(final SubscriptionCreateRequestDTO request) {
-        validateId(request.getId());
-        final var statusId = statusService.findByStatusEnum(request.getStatus()).getId();
-        final var savedSubscription = repository.save(buildSubscription(request.getId(), statusId));
-        return buildSubscriptionDTO(savedSubscription);
+    public SubscriptionDTO create(final SubscriptionRequestDTO request) {
+        return transaction.execute(transactionStatus -> {
+
+            validateId(request.getId());
+            final var status = statusService.getStatusFromEventType(request.getEventType());
+            final var savedSubscription = repository.save(buildSubscription(request.getId(), status.getId()));
+            final var subscriptionDTO = buildSubscriptionDTO(savedSubscription);
+
+            eventHistoryService.create(
+                    eventHistoryService.buildCreateRequestDTO(request.getEventType(), subscriptionDTO)
+            );
+            return subscriptionDTO;
+        });
     }
 
-    public SubscriptionDTO update(final SubscriptionUpdateRequestDTO request) {
+    public SubscriptionDTO update(final SubscriptionRequestDTO request) {
         return transaction.execute(transactionStatus -> {
 
             final var subscription = findById(request.getId());
@@ -52,7 +60,10 @@ public class SubscriptionService {
             );
 
             final var subscriptionDTO = buildSubscriptionDTO(updatedSubscription);
-            eventHistoryService.create(eventHistoryService.buildCreateRequestDTO(request.getEventType(), subscriptionDTO));
+
+            eventHistoryService.create(
+                    eventHistoryService.buildCreateRequestDTO(request.getEventType(), subscriptionDTO)
+            );
             return subscriptionDTO;
         });
     }
@@ -71,6 +82,13 @@ public class SubscriptionService {
 
     public SubscriptionDTO findDTOById(final String id) {
         return buildSubscriptionDTO(findById(id));
+    }
+
+    public SubscriptionRequestDTO buildSubscriptionRequestDTO(String id, EventTypeEnum eventTypeEnum) {
+        return SubscriptionRequestDTO.builder()
+                .id(id)
+                .eventType(eventTypeEnum)
+                .build();
     }
 
     private Subscription findById(final String id) {

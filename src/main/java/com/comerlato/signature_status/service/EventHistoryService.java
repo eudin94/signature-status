@@ -29,17 +29,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class EventHistoryService {
 
     private final EventHistoryRepository repository;
-    private final SubscriptionService subscriptionService;
     private final MessageHelper messageHelper;
 
-    public EventHistoryDTO create(final EventHistoryCreateRequestDTO request) {
-        final var savedEvent = repository.save(
+    public void create(final EventHistoryCreateRequestDTO request) {
+        repository.save(
                 eventHistoryMapper.buildEventHistory(request)
                         .withSubscriptionId(request.getSubscriptionDTO().getId())
                         .withCreatedAt(now())
         );
-        return eventHistoryMapper.buildEventHistoryDTO(savedEvent)
-                .withSubscription(request.getSubscriptionDTO());
     }
 
     public Page<EventHistoryDTO> findAll(final Optional<EventTypeEnum> type,
@@ -48,11 +45,11 @@ public class EventHistoryService {
         return repository.findAll(EventHistorySpecification.builder()
                 .type(type)
                 .subscriptionsIds(subscriptionsIds)
-                .build(), pageable).map(this::buildEventHistoryDTO);
+                .build(), pageable).map(eventHistoryMapper::buildEventHistoryDTO);
     }
 
     public EventHistoryDTO findDTOById(final Long id) {
-        return buildEventHistoryDTO(findById(id));
+        return eventHistoryMapper.buildEventHistoryDTO(findById(id));
     }
 
     public EventHistoryCreateRequestDTO buildCreateRequestDTO(final EventTypeEnum type,
@@ -69,11 +66,4 @@ public class EventHistoryService {
             throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_EVENT_NOT_FOUND, id.toString()));
         });
     }
-
-    private EventHistoryDTO buildEventHistoryDTO(final EventHistory eventHistory) {
-        final var subscription = subscriptionService.findDTOById(eventHistory.getSubscriptionId());
-        return eventHistoryMapper.buildEventHistoryDTO(eventHistory)
-                .withSubscription(subscription);
-    }
-
 }

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @With
 @Jacksonized
 @Builder
-public class SubscriptionUpdateRequestDTO {
+public class SubscriptionRequestDTO {
 
     @NotBlank
     String id;

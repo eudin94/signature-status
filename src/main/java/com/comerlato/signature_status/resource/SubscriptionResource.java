@@ -1,8 +1,7 @@
 package com.comerlato.signature_status.resource;
 
-import com.comerlato.signature_status.dto.SubscriptionCreateRequestDTO;
+import com.comerlato.signature_status.dto.SubscriptionRequestDTO;
 import com.comerlato.signature_status.dto.SubscriptionDTO;
-import com.comerlato.signature_status.dto.SubscriptionUpdateRequestDTO;
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +29,7 @@ public class SubscriptionResource {
     @PostMapping
     @ResponseStatus(CREATED)
     @Operation(summary = "Create subscription", responses = {@ApiResponse(responseCode = "201")})
-    public SubscriptionDTO create(@Valid @RequestBody final SubscriptionCreateRequestDTO request) {
+    public SubscriptionDTO create(@Valid @RequestBody final SubscriptionRequestDTO request) {
         return service.create(request);
     }
 
@@ -48,7 +47,7 @@ public class SubscriptionResource {
     @PutMapping
     @ResponseStatus(OK)
     @Operation(summary = "Update subscription status", responses = {@ApiResponse(responseCode = "200")})
-    public SubscriptionDTO update(@Valid @RequestBody final SubscriptionUpdateRequestDTO request) {
+    public SubscriptionDTO update(@Valid @RequestBody final SubscriptionRequestDTO request) {
         return service.update(request);
     }
 

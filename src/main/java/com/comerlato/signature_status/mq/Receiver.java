@@ -1,6 +1,5 @@
 package com.comerlato.signature_status.mq;
 
-import com.comerlato.signature_status.dto.SubscriptionUpdateRequestDTO;
 import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.service.SubscriptionService;
 import com.rabbitmq.client.Channel;
@@ -16,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 
+import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
@@ -44,7 +44,7 @@ public class Receiver {
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
-                updateSubscription(message);
+                manageSubscription(message);
             };
 
             channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> {
@@ -57,22 +57,27 @@ public class Receiver {
 
     }
 
-    private void updateSubscription(String message) {
+    private void manageSubscription(String message) {
         log.info("Message received: [" + message + "]");
         Try.run(() -> {
-            final var updatedSubscription = subscriptionService.update(buildRequest(message));
-            log.info("\nSubscription has been updated:\n" + updatedSubscription.toString());
+
+            final var idAndEventType = message.split(",");
+            final var subscriptionRequest = subscriptionService.buildSubscriptionRequestDTO(
+                    idAndEventType[0], EventTypeEnum.valueOf(idAndEventType[1])
+            );
+
+            if (SUBSCRIPTION_PURCHASED.equals(subscriptionRequest.getEventType())) {
+                final var savedSubscription = subscriptionService.create(subscriptionRequest);
+                log.info("\nSubscription has been created:\n" + savedSubscription.toString());
+
+            } else {
+                final var updatedSubscription = subscriptionService.update(subscriptionRequest);
+                log.info("\nSubscription has been updated:\n" + updatedSubscription.toString());
+            }
+
         }).onFailure(throwable -> {
             log.error(throwable.getMessage());
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, throwable.getMessage());
         });
-    }
-
-    private SubscriptionUpdateRequestDTO buildRequest(String message) {
-        final var idAndEventType = message.split(",");
-        return SubscriptionUpdateRequestDTO.builder()
-                .id(idAndEventType[0])
-                .eventType(EventTypeEnum.valueOf(idAndEventType[1]))
-                .build();
     }
 }
