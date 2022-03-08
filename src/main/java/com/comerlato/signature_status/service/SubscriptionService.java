@@ -68,11 +68,6 @@ public class SubscriptionService {
         });
     }
 
-    public void delete(final String id) {
-        final var subscription = findById(id);
-        repository.delete(subscription);
-    }
-
     public Page<SubscriptionDTO> findAll(final Optional<StatusEnum> status,
                                          final Pageable pageable) {
         return repository.findAll(SubscriptionSpecification.builder()

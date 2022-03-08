@@ -1,7 +1,7 @@
 package com.comerlato.signature_status.resource;
 
-import com.comerlato.signature_status.dto.SubscriptionRequestDTO;
 import com.comerlato.signature_status.dto.SubscriptionDTO;
+import com.comerlato.signature_status.dto.SubscriptionRequestDTO;
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/subscription")
@@ -49,13 +50,6 @@ public class SubscriptionResource {
     @Operation(summary = "Update subscription status", responses = {@ApiResponse(responseCode = "200")})
     public SubscriptionDTO update(@Valid @RequestBody final SubscriptionRequestDTO request) {
         return service.update(request);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(NO_CONTENT)
-    @Operation(summary = "Delete subscription by id", responses = {@ApiResponse(responseCode = "204")})
-    public void delete(@PathVariable final String id) {
-        service.delete(id);
     }
 
     @GetMapping("/{id}")

@@ -1,4 +1,4 @@
-package com.comerlato.signature_status.mq;
+package com.comerlato.signature_status.component.mq;
 
 import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.service.SubscriptionService;
@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.PostConstruct;
 
 import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class Receiver {
             log.info("The message queue service is waiting for new messages");
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                String message = new String(delivery.getBody(), "UTF-8");
+                String message = new String(delivery.getBody(), UTF_8);
                 manageSubscription(message);
             };
 
