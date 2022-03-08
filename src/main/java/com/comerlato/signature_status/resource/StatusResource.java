@@ -39,6 +39,6 @@ public class StatusResource {
     @ResponseStatus(OK)
     @Operation(summary = "Find all status", responses = {@ApiResponse(responseCode = "200")})
     public StatusDTO findDTOById(@PathVariable final Long id) {
-        return service.findDTOByID(id);
+        return service.findDTOById(id);
     }
 }

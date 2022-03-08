@@ -121,7 +121,7 @@ public class SubscriptionService {
 
     private SubscriptionDTO buildSubscriptionDTO(final Subscription subscription) {
         return subscriptionMapper.buildSubscriptionDTO(subscription)
-                .withStatus(statusService.findById(subscription.getStatusId()));
+                .withStatus(statusService.findDTOById(subscription.getStatusId()));
     }
 
 }

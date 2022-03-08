@@ -37,7 +37,7 @@ public class StatusService {
                 .build(), pageable).map(statusMapper::buildStatusDTO);
     }
 
-    public StatusDTO findDTOByID(final Long id) {
+    public StatusDTO findDTOById(final Long id) {
         return statusMapper.buildStatusDTO(findById(id));
     }
 
