@@ -57,3 +57,4 @@ api:
 mq:
   amqp:
     uri: ${CLOUDAMQP_URL:amqp://guest:guest@localhost}
+    queue: ${CLOUDAMQP_QUEUE:NOTIFICATION_QUEUE}
