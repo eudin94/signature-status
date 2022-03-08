@@ -68,7 +68,7 @@ public class Receiver {
             );
 
             if (SUBSCRIPTION_PURCHASED.equals(subscriptionRequest.getEventType())) {
-                final var savedSubscription = subscriptionService.create(subscriptionRequest);
+                final var savedSubscription = subscriptionService.create(subscriptionRequest.getId());
                 log.info("\nSubscription has been created:\n" + savedSubscription.toString());
 
             } else {

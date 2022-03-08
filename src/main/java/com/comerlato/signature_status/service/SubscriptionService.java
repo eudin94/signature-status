@@ -18,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
+import static com.comerlato.signature_status.enums.StatusEnum.ACTIVE;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.*;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.subscriptionMapper;
 import static java.time.LocalDateTime.now;
@@ -34,16 +36,16 @@ public class SubscriptionService {
     private final TransactionTemplate transaction;
     private final MessageHelper messageHelper;
 
-    public SubscriptionDTO create(final SubscriptionRequestDTO request) {
+    public SubscriptionDTO create(final String id) {
         return transaction.execute(transactionStatus -> {
 
-            validateId(request.getId());
-            final var status = statusService.getStatusFromEventType(request.getEventType());
-            final var savedSubscription = repository.save(buildSubscription(request.getId(), status.getId()));
+            validateId(id);
+            final var status = statusService.findByStatusEnum(ACTIVE);
+            final var savedSubscription = repository.save(buildSubscription(id, status.getId()));
             final var subscriptionDTO = buildSubscriptionDTO(savedSubscription);
 
             eventHistoryService.create(
-                    eventHistoryService.buildCreateRequestDTO(request.getEventType(), subscriptionDTO)
+                    eventHistoryService.buildCreateRequestDTO(SUBSCRIPTION_PURCHASED, subscriptionDTO)
             );
             return subscriptionDTO;
         });
@@ -53,7 +55,7 @@ public class SubscriptionService {
         return transaction.execute(transactionStatus -> {
 
             final var subscription = findById(request.getId());
-            final var status = statusService.getStatusFromEventType(request.getEventType());
+            final var status = statusService.findStatusFromEventType(request.getEventType());
             validateStatus(subscription.getStatusId(), status.getId());
             final var updatedSubscription = repository.save(
                     subscription.withStatusId(status.getId()).withUpdatedAt(now())

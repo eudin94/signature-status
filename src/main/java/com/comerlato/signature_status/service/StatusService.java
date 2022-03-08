@@ -55,7 +55,7 @@ public class StatusService {
         });
     }
 
-    public Status getStatusFromEventType(final EventTypeEnum eventType) {
+    public Status findStatusFromEventType(final EventTypeEnum eventType) {
         switch (eventType) {
             case SUBSCRIPTION_PURCHASED:
             case SUBSCRIPTION_RESTARTED:

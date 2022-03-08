@@ -30,8 +30,8 @@ public class SubscriptionResource {
     @PostMapping
     @ResponseStatus(CREATED)
     @Operation(summary = "Create subscription", responses = {@ApiResponse(responseCode = "201")})
-    public SubscriptionDTO create(@Valid @RequestBody final SubscriptionRequestDTO request) {
-        return service.create(request);
+    public SubscriptionDTO create(@Valid @RequestParam final String id) {
+        return service.create(id);
     }
 
     @GetMapping
