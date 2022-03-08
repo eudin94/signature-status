@@ -18,4 +18,15 @@ public class SubscriptionDTO {
     Status status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
+    @Override
+    public String toString() {
+        return "Subscription:\n" +
+                "{\n" +
+                "   ID = '" + id + "'\n" +
+                "   STATUS = '" + status + "'\n" +
+                "   CREATED AT = '" + createdAt + "'\n" +
+                "   UPDATED AT = '" + updatedAt + "'\n" +
+                "}\n";
+    }
 }

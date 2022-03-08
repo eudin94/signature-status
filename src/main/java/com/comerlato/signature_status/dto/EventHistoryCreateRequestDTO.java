@@ -18,5 +18,5 @@ public class EventHistoryCreateRequestDTO {
     @NotNull
     EventTypeEnum type;
     @NotBlank
-    String subscriptionId;
+    SubscriptionDTO subscriptionDTO;
 }

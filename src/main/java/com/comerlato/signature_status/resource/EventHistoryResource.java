@@ -1,6 +1,5 @@
 package com.comerlato.signature_status.resource;
 
-import com.comerlato.signature_status.dto.EventHistoryCreateRequestDTO;
 import com.comerlato.signature_status.dto.EventHistoryDTO;
 import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.service.EventHistoryService;
@@ -13,11 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -27,13 +24,6 @@ import static org.springframework.http.HttpStatus.OK;
 public class EventHistoryResource {
 
     private final EventHistoryService service;
-
-    @PostMapping
-    @ResponseStatus(CREATED)
-    @Operation(summary = "Create event", responses = {@ApiResponse(responseCode = "201")})
-    public EventHistoryDTO create(@Valid @RequestBody final EventHistoryCreateRequestDTO request) {
-        return service.create(request);
-    }
 
     @GetMapping
     @ResponseStatus(OK)

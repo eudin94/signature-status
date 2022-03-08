@@ -2,6 +2,7 @@ package com.comerlato.signature_status.service;
 
 import com.comerlato.signature_status.dto.EventHistoryCreateRequestDTO;
 import com.comerlato.signature_status.dto.EventHistoryDTO;
+import com.comerlato.signature_status.dto.SubscriptionDTO;
 import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.modules.entity.EventHistory;
@@ -32,12 +33,13 @@ public class EventHistoryService {
     private final MessageHelper messageHelper;
 
     public EventHistoryDTO create(final EventHistoryCreateRequestDTO request) {
-        final var subscription = subscriptionService.findDTOById(request.getSubscriptionId());
-        final var savedEvent = repository.save(eventHistoryMapper.buildEventHistory(request)
-                .withCreatedAt(now()));
-        // TODO IMPLEMENTAR MENSAGERIA
+        final var savedEvent = repository.save(
+                eventHistoryMapper.buildEventHistory(request)
+                        .withSubscriptionId(request.getSubscriptionDTO().getId())
+                        .withCreatedAt(now())
+        );
         return eventHistoryMapper.buildEventHistoryDTO(savedEvent)
-                .withSubscription(subscription);
+                .withSubscription(request.getSubscriptionDTO());
     }
 
     public Page<EventHistoryDTO> findAll(final Optional<EventTypeEnum> type,
@@ -53,10 +55,18 @@ public class EventHistoryService {
         return buildEventHistoryDTO(findById(id));
     }
 
+    public EventHistoryCreateRequestDTO buildCreateRequestDTO(final EventTypeEnum type,
+                                                              final SubscriptionDTO subscriptionDTO) {
+        return EventHistoryCreateRequestDTO.builder()
+                .type(type)
+                .subscriptionDTO(subscriptionDTO)
+                .build();
+    }
+
     private EventHistory findById(final Long id) {
         return repository.findById(id).orElseThrow(() -> {
-           log.error(messageHelper.get(ERROR_EVENT_NOT_FOUND, id.toString()));
-           throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_EVENT_NOT_FOUND, id.toString()));
+            log.error(messageHelper.get(ERROR_EVENT_NOT_FOUND, id.toString()));
+            throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_EVENT_NOT_FOUND, id.toString()));
         });
     }
 

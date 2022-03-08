@@ -1,6 +1,6 @@
 package com.comerlato.signature_status.dto;
 
-import com.comerlato.signature_status.enums.StatusEnum;
+import com.comerlato.signature_status.enums.EventTypeEnum;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
@@ -18,5 +18,5 @@ public class SubscriptionUpdateRequestDTO {
     @NotBlank
     String id;
     @NotNull
-    StatusEnum status;
+    EventTypeEnum eventType;
 }

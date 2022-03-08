@@ -1,6 +1,7 @@
 package com.comerlato.signature_status.mq;
 
 import com.comerlato.signature_status.dto.SubscriptionUpdateRequestDTO;
+import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.service.SubscriptionService;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -59,16 +60,19 @@ public class Receiver {
     private void updateSubscription(String message) {
         log.info("Message received: [" + message + "]");
         Try.run(() -> {
-            subscriptionService.update(buildRequest(message));
-            log.info("");
-        }).onFailure(throwable -> log.error(throwable.getMessage()));
+            final var updatedSubscription = subscriptionService.update(buildRequest(message));
+            log.info("\nSubscription has been updated:\n" + updatedSubscription.toString());
+        }).onFailure(throwable -> {
+            log.error(throwable.getMessage());
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, throwable.getMessage());
+        });
     }
 
     private SubscriptionUpdateRequestDTO buildRequest(String message) {
-//        TODO Implementar substring e terminar de montar o DTO
+        final var idAndEventType = message.split(",");
         return SubscriptionUpdateRequestDTO.builder()
-                .id("")
-                .status(null)
+                .id(idAndEventType[0])
+                .eventType(EventTypeEnum.valueOf(idAndEventType[1]))
                 .build();
     }
 }

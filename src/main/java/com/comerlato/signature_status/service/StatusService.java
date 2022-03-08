@@ -1,6 +1,7 @@
 package com.comerlato.signature_status.service;
 
 import com.comerlato.signature_status.dto.StatusDTO;
+import com.comerlato.signature_status.enums.EventTypeEnum;
 import com.comerlato.signature_status.enums.StatusEnum;
 import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.modules.entity.Status;
@@ -15,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static com.comerlato.signature_status.enums.StatusEnum.ACTIVE;
+import static com.comerlato.signature_status.enums.StatusEnum.INACTIVE;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_ID_NOT_FOUND;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_NAME_NOT_FOUND;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.statusMapper;
@@ -45,10 +48,24 @@ public class StatusService {
         });
     }
 
-    public Status findByName(final StatusEnum name) {
+    public Status findByStatusEnum(final StatusEnum name) {
         return repository.findByName(name).orElseThrow(() -> {
             log.error(messageHelper.get(ERROR_STATUS_NAME_NOT_FOUND, name.name()));
             throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_STATUS_NAME_NOT_FOUND, name.name()));
         });
+    }
+
+    public Status getStatusFromEventType(final EventTypeEnum eventType) {
+        switch (eventType) {
+            case SUBSCRIPTION_PURCHASED:
+            case SUBSCRIPTION_RESTARTED:
+                return findByStatusEnum(ACTIVE);
+
+            case SUBSCRIPTION_CANCELED:
+                return findByStatusEnum(INACTIVE);
+
+            default:
+                return null;
+        }
     }
 }

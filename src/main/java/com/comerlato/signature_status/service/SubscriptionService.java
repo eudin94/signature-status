@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -29,23 +30,31 @@ public class SubscriptionService {
 
     private final SubscriptionRepository repository;
     private final StatusService statusService;
+    private final EventHistoryService eventHistoryService;
+    private final TransactionTemplate transaction;
     private final MessageHelper messageHelper;
 
     public SubscriptionDTO create(final SubscriptionCreateRequestDTO request) {
         validateId(request.getId());
-        final var statusId = statusService.findByName(request.getStatus()).getId();
+        final var statusId = statusService.findByStatusEnum(request.getStatus()).getId();
         final var savedSubscription = repository.save(buildSubscription(request.getId(), statusId));
         return buildSubscriptionDTO(savedSubscription);
     }
 
     public SubscriptionDTO update(final SubscriptionUpdateRequestDTO request) {
-        final var subscription = findById(request.getId());
-        final var status = statusService.findByName(request.getStatus());
-        validateStatus(subscription.getStatusId(), status.getId());
-        final var updatedSubscription = repository.save(
-                subscription.withStatusId(status.getId()).withUpdatedAt(now())
-        );
-        return buildSubscriptionDTO(updatedSubscription);
+        return transaction.execute(transactionStatus -> {
+
+            final var subscription = findById(request.getId());
+            final var status = statusService.getStatusFromEventType(request.getEventType());
+            validateStatus(subscription.getStatusId(), status.getId());
+            final var updatedSubscription = repository.save(
+                    subscription.withStatusId(status.getId()).withUpdatedAt(now())
+            );
+
+            final var subscriptionDTO = buildSubscriptionDTO(updatedSubscription);
+            eventHistoryService.create(eventHistoryService.buildCreateRequestDTO(request.getEventType(), subscriptionDTO));
+            return subscriptionDTO;
+        });
     }
 
     public void delete(final String id) {
@@ -70,6 +79,7 @@ public class SubscriptionService {
             throw new ResponseStatusException(BAD_REQUEST, messageHelper.get(ERROR_SUBSCRIPTION_NOT_FOUND, id));
         });
     }
+
 
     private void validateId(final String id) {
         repository.findById(id).ifPresent(subscription -> {
