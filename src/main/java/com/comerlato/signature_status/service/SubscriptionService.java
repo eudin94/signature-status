@@ -45,7 +45,7 @@ public class SubscriptionService {
             final var subscriptionDTO = buildSubscriptionDTO(savedSubscription);
 
             eventHistoryService.create(
-                    eventHistoryService.buildCreateRequestDTO(SUBSCRIPTION_PURCHASED, subscriptionDTO)
+                    eventHistoryService.buildRequestDTO(SUBSCRIPTION_PURCHASED, subscriptionDTO)
             );
             return subscriptionDTO;
         });
@@ -64,7 +64,7 @@ public class SubscriptionService {
             final var subscriptionDTO = buildSubscriptionDTO(updatedSubscription);
 
             eventHistoryService.create(
-                    eventHistoryService.buildCreateRequestDTO(request.getEventType(), subscriptionDTO)
+                    eventHistoryService.buildRequestDTO(request.getEventType(), subscriptionDTO)
             );
             return subscriptionDTO;
         });

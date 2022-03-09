@@ -52,8 +52,8 @@ public class EventHistoryService {
         return eventHistoryMapper.buildEventHistoryDTO(findById(id));
     }
 
-    public EventHistoryRequestDTO buildCreateRequestDTO(final EventTypeEnum type,
-                                                        final SubscriptionDTO subscriptionDTO) {
+    public EventHistoryRequestDTO buildRequestDTO(final EventTypeEnum type,
+                                                  final SubscriptionDTO subscriptionDTO) {
         return EventHistoryRequestDTO.builder()
                 .type(type)
                 .subscriptionDTO(subscriptionDTO)
