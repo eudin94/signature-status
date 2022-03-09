@@ -24,6 +24,7 @@ import static com.comerlato.signature_status.exception.ErrorCodeEnum.*;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.subscriptionMapper;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -47,6 +48,7 @@ public class SubscriptionService {
             eventHistoryService.create(
                     eventHistoryService.buildRequestDTO(SUBSCRIPTION_PURCHASED, subscriptionDTO)
             );
+
             return subscriptionDTO;
         });
     }
@@ -62,10 +64,10 @@ public class SubscriptionService {
             );
 
             final var subscriptionDTO = buildSubscriptionDTO(updatedSubscription);
-
             eventHistoryService.create(
                     eventHistoryService.buildRequestDTO(request.getEventType(), subscriptionDTO)
             );
+
             return subscriptionDTO;
         });
     }
@@ -91,7 +93,7 @@ public class SubscriptionService {
     private Subscription findById(final String id) {
         return repository.findById(id).orElseThrow(() -> {
             log.error(messageHelper.get(ERROR_SUBSCRIPTION_NOT_FOUND, id));
-            throw new ResponseStatusException(BAD_REQUEST, messageHelper.get(ERROR_SUBSCRIPTION_NOT_FOUND, id));
+            throw new ResponseStatusException(NOT_FOUND, messageHelper.get(ERROR_SUBSCRIPTION_NOT_FOUND, id));
         });
     }
 

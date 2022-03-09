@@ -3,10 +3,13 @@ package com.comerlato.signature_status.service;
 import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.modules.repository.EventHistoryRepository;
 import com.comerlato.signature_status.modules.repository.spec.EventHistorySpecification;
+import io.vavr.control.Try;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +21,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.comerlato.signature_status.util.creator.EventHistoryCreator.*;
+import static com.comerlato.signature_status.util.creator.EventHistoryCreator.eventHistory;
+import static com.comerlato.signature_status.util.creator.EventHistoryCreator.eventHistoryDTO;
+import static com.comerlato.signature_status.util.creator.EventHistoryCreator.eventHistoryRequestDTO;
 import static com.comerlato.signature_status.util.creator.SubscriptionCreator.subscriptionDTO;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.eventHistoryMapper;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -39,16 +48,25 @@ public class EventHistoryServiceTest {
     @Mock
     private MessageHelper messageHelper;
 
+    private static MockedStatic<LocalDateTime> localDateTime;
+    private static LocalDateTime now = now();
+
+    @BeforeAll
+    public static void setUp() {
+        Try.run(() -> {
+            localDateTime = mockStatic(LocalDateTime.class);
+            localDateTime.when(LocalDateTime::now).thenReturn(now);
+        });
+    }
+
     @Test
     void create_savesEntityToDatabase_whenSuccessful() {
-        final var now = now();
-        final var mockLocalDateTime = mockStatic(LocalDateTime.class, CALLS_REAL_METHODS);
-        mockLocalDateTime.when(LocalDateTime::now).thenReturn(now);
-
         final var unsavedEvent = eventHistory
                 .withId(null)
                 .withCreatedAt(now);
+
         service.create(eventHistoryRequestDTO);
+
         verify(repository, times(1)).save(unsavedEvent);
     }
 

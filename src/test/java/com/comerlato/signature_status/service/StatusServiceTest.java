@@ -21,11 +21,12 @@ import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_CA
 import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
 import static com.comerlato.signature_status.enums.StatusEnum.ACTIVE;
 import static com.comerlato.signature_status.enums.StatusEnum.INACTIVE;
-import static com.comerlato.signature_status.util.creator.StatusCreator.status;
-import static com.comerlato.signature_status.util.creator.StatusCreator.statusDTO;
+import static com.comerlato.signature_status.util.creator.StatusCreator.statusActive;
+import static com.comerlato.signature_status.util.creator.StatusCreator.statusActiveDTO;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.statusMapper;
 import static java.util.Optional.empty;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.ASC;
@@ -43,7 +44,7 @@ public class StatusServiceTest {
 
     @Test
     void findAll_returnsPageOfStatusDTOs_whenSuccessful() {
-        final var list = List.of(status);
+        final var list = List.of(statusActive);
         final var page = new PageImpl<>(list);
         final var pageDTO = page.map(statusMapper::buildStatusDTO);
         final var pageable = PageRequest.of(0, 1, Sort.by(ASC, "id"));
@@ -54,34 +55,32 @@ public class StatusServiceTest {
 
     @Test
     void findDTOById_returnsStatusDTO_whenSuccessful() {
-        when(repository.findById(status.getId())).thenReturn(Optional.of(status));
-        assertEquals(statusDTO, service.findDTOById(status.getId()));
+        when(repository.findById(statusActive.getId())).thenReturn(Optional.of(statusActive));
+        assertEquals(statusActiveDTO, service.findDTOById(statusActive.getId()));
     }
 
     @Test
     void findDTOById_returns404_whenStatusIsNotFound() {
-        when(repository.findById(status.getId())).thenReturn(empty());
-        final var responseStatus = assertThrows(ResponseStatusException.class,
-                () -> service.findDTOById(status.getId())).getStatus();
+        when(repository.findById(statusActive.getId())).thenReturn(empty());
+        final var status = assertThrows(ResponseStatusException.class,
+                () -> service.findDTOById(statusActive.getId())).getStatus();
 
-        assertEquals(NOT_FOUND, responseStatus);
+        assertEquals(NOT_FOUND, status);
     }
 
     @Test
     void findByEventType_returnsStatus_whenPURCHASED() {
-        final var activeStatus = status.withName(ACTIVE);
-        when(repository.findByName(ACTIVE)).thenReturn(Optional.of(activeStatus));
-
-        assertEquals(activeStatus, service.findByEventType(SUBSCRIPTION_PURCHASED));
+        when(repository.findByName(ACTIVE)).thenReturn(Optional.of(statusActive));
+        assertEquals(statusActive, service.findByEventType(SUBSCRIPTION_PURCHASED));
     }
 
     @Test
     void findByEventType_returns404_whenCANCELED() {
         when(repository.findByName(INACTIVE)).thenReturn(empty());
-        final var responseStatus = assertThrows(ResponseStatusException.class,
+        final var status = assertThrows(ResponseStatusException.class,
                 () -> service.findByEventType(SUBSCRIPTION_CANCELED)).getStatus();
 
-        assertEquals(NOT_FOUND, responseStatus);
+        assertEquals(NOT_FOUND, status);
     }
 
 }
