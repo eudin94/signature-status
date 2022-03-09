@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_CANCELED;
 import static com.comerlato.signature_status.enums.StatusEnum.ACTIVE;
 import static com.comerlato.signature_status.enums.StatusEnum.INACTIVE;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_STATUS_ID_NOT_FOUND;
@@ -55,17 +56,7 @@ public class StatusService {
         });
     }
 
-    public Status findStatusFromEventType(final EventTypeEnum eventType) {
-        switch (eventType) {
-            case SUBSCRIPTION_PURCHASED:
-            case SUBSCRIPTION_RESTARTED:
-                return findByStatusEnum(ACTIVE);
-
-            case SUBSCRIPTION_CANCELED:
-                return findByStatusEnum(INACTIVE);
-
-            default:
-                return null;
-        }
+    public Status findByEventType(final EventTypeEnum eventType) {
+        return SUBSCRIPTION_CANCELED.equals(eventType) ? findByStatusEnum(INACTIVE) : findByStatusEnum(ACTIVE);
     }
 }

@@ -55,7 +55,7 @@ public class SubscriptionService {
         return transaction.execute(transactionStatus -> {
 
             final var subscription = findById(request.getId());
-            final var status = statusService.findStatusFromEventType(request.getEventType());
+            final var status = statusService.findByEventType(request.getEventType());
             validateStatus(subscription.getStatusId(), status.getId());
             final var updatedSubscription = repository.save(
                     subscription.withStatusId(status.getId()).withUpdatedAt(now())
