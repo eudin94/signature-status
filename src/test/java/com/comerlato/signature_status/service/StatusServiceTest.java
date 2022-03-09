@@ -68,7 +68,7 @@ public class StatusServiceTest {
     }
 
     @Test
-    void findByEventType_returnsStatus_casePURCHASED_orRESTARTED() {
+    void findByEventType_returnsStatus_whenPURCHASED() {
         final var activeStatus = status.withName(ACTIVE);
         when(repository.findByName(ACTIVE)).thenReturn(Optional.of(activeStatus));
 
@@ -76,7 +76,7 @@ public class StatusServiceTest {
     }
 
     @Test
-    void findByEventType_returns404_caseCANCELED() {
+    void findByEventType_returns404_whenCANCELED() {
         when(repository.findByName(INACTIVE)).thenReturn(empty());
         final var responseStatus = assertThrows(ResponseStatusException.class,
                 () -> service.findByEventType(SUBSCRIPTION_CANCELED)).getStatus();
