@@ -20,7 +20,9 @@ import java.util.Optional;
 
 import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
 import static com.comerlato.signature_status.enums.StatusEnum.ACTIVE;
-import static com.comerlato.signature_status.exception.ErrorCodeEnum.*;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_SUBSCRIPTION_ALREADY_EXISTS;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_SUBSCRIPTION_NOT_FOUND;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_UNCHANGED_STATUS;
 import static com.comerlato.signature_status.util.mapper.MapperConstants.subscriptionMapper;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
