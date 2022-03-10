@@ -3,7 +3,7 @@ version: '3.1'
 
 services:
 
-  db:
+  postgres_db:
     container_name: signature_status_db
     image: library/postgres:13
     restart: always
@@ -15,8 +15,13 @@ services:
       - "3210:5432"
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U library/postgres:13" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  rabbitmq:
+  rabbit_mq:
     container_name: signature_status_mq
     image: library/rabbitmq
     restart: always
@@ -25,14 +30,19 @@ services:
     networks:
       - rabbitmq_go_net
 
-  signaturestatusapi:
+  signature_status_api:
     container_name: signature_status_api
-    image: eduardomc94/signature_status
+    image: eduardomc94/signature-status
     ports:
-      - "3212:5672"
+      - "3212:5432"
     depends_on:
-      - db
-      - rabbitmq
+      postgres_db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:3210/signature_status?currentSchema=public
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123
+      - SPRING_PROFILES_ACTIVE=local
 
 networks:
   rabbitmq_go_net:
