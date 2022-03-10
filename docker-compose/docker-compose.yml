@@ -25,6 +25,15 @@ services:
     networks:
       - rabbitmq_go_net
 
+  signaturestatusapi:
+    container_name: signature_status_api
+    image: eduardomc94/signature_status
+    ports:
+      - "3212:5672"
+    depends_on:
+      - db
+      - rabbitmq
+
 networks:
   rabbitmq_go_net:
     driver: bridge
