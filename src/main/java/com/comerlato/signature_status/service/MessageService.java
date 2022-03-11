@@ -27,9 +27,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequiredArgsConstructor
 public class MessageService {
 
-    @Value("${mq.amqp.queue}")
+    @Value("${spring.rabbitmq.queue}")
     private String QUEUE_NAME;
-    @Value("${mq.amqp.uri}")
+    @Value("${spring.rabbitmq.uri}")
     private String URI;
 
     public void upload(final MultipartFile file) {

@@ -24,9 +24,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequiredArgsConstructor
 public class Receiver {
 
-    @Value("${mq.amqp.queue}")
+    @Value("${spring.rabbitmq.queue}")
     private String QUEUE_NAME;
-    @Value("${mq.amqp.uri}")
+    @Value("${spring.rabbitmq.uri}")
     private String URI;
 
     private final SubscriptionService subscriptionService;
