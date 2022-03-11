@@ -24,9 +24,9 @@ spring:
     enabled: true
     default-schema: public
     liquibase-schema: public
-    url: ${spring.datasource.url}
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:3210/signature_status?currentSchema=public}
+    user: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:123}
     change-log: db.changelog/db.changelog-master.yaml
   application.name: voting-challenge
   web:
