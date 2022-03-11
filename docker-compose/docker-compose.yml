@@ -16,24 +16,29 @@ services:
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U library/postgres:13" ]
+      test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   rabbit_mq:
     container_name: signature_status_mq
-    hostname: rabbit
+    hostname: signature_status_mq
     image: library/rabbitmq
     restart: always
     ports:
       - "3211:5672"
-      - "15672:15672"
+      - "13211:15672"
     volumes:
       - ~/.docker-conf/rabbit_mq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbit_mq/log/:/var/log/rabbitmq
     networks:
       - rabbitmq_go_net
+    healthcheck:
+      test: [ "CMD-SHELL", "mq_isready" ]
+      interval: 30s
+      timeout: 5s
+      retries: 4
 
   signature_status_api:
     container_name: signature_status_api
@@ -43,10 +48,12 @@ services:
     depends_on:
       postgres_db:
         condition: service_healthy
+      rabbit_mq:
+        condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://signature_status_db/signature_status?currentSchema=public
-      - SPRING_RABBITMQ_HOST=rabbit
+      - SPRING_RABBITMQ_HOST=signature_status_mq
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
 
