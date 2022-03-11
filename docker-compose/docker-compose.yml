@@ -20,8 +20,6 @@ services:
       interval: 30s
       timeout: 5s
       retries: 4
-    environment:
-      - RABBITMQ_PORT=5267
 
   postgres_db:
     container_name: signature_status_db
@@ -54,9 +52,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://signature_status_db/signature_status?currentSchema=public
-      - SPRING_RABBITMQ_HOST=signature_status_mq
-      - SPRING_RABBITMQ_PORT=5267
-
+      - CLOUD_AMQP_HOST=signature_status_mq
 
 networks:
   rabbitmq_go_net:
