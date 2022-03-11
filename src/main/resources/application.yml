@@ -29,6 +29,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:123}
     change-log: db.changelog/db.changelog-master.yaml
   rabbitmq:
+    port: ${CLOUDAMQP_PORT:5267}
     username: ${CLOUDAMQP_USERNAME:guest}
     password: ${CLOUDAMQP_PASSWORD:guest}
     uri: ${CLOUDAMQP_URL:amqp://guest:guest@localhost}

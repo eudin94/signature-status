@@ -10,7 +10,6 @@ services:
     restart: always
     ports:
       - "5672:5672"
-      - "15672:15672"
     volumes:
       - ~/.docker-conf/rabbit_mq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbit_mq/log/:/var/log/rabbitmq
@@ -21,6 +20,8 @@ services:
       interval: 30s
       timeout: 5s
       retries: 4
+    environment:
+      - RABBITMQ_PORT=5267
 
   postgres_db:
     container_name: signature_status_db
@@ -54,6 +55,8 @@ services:
       - SPRING_PROFILES_ACTIVE=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://signature_status_db/signature_status?currentSchema=public
       - SPRING_RABBITMQ_HOST=signature_status_mq
+      - SPRING_RABBITMQ_PORT=5267
+
 
 networks:
   rabbitmq_go_net:
