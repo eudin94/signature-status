@@ -30,7 +30,7 @@ spring:
     change-log: db.changelog/db.changelog-master.yaml
   rabbitmq:
     host: ${CLOUD_AMQP_HOST:localhost}
-    port: ${CLOUDAMQP_PORT:5267}
+    port: ${CLOUDAMQP_PORT:5672}
     username: ${CLOUDAMQP_USERNAME:guest}
     password: ${CLOUDAMQP_PASSWORD:guest}
     uri: ${CLOUDAMQP_URL:amqp://guest:guest@localhost}
