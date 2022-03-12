@@ -1,6 +1,8 @@
 package com.comerlato.signature_status.component.mq;
 
 import com.comerlato.signature_status.enums.EventTypeEnum;
+import com.comerlato.signature_status.exception.ErrorCodeEnum;
+import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.service.SubscriptionService;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -16,7 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.PostConstruct;
 
 import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_MESSAGE_QUEUE_CONNECTION;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
@@ -30,6 +34,9 @@ public class Receiver {
     private String URI;
 
     private final SubscriptionService subscriptionService;
+    private final MessageHelper messageHelper;
+
+    private static Long ERROR_COUNTER = 0L;
 
     @PostConstruct
     public void receive() {
@@ -52,8 +59,17 @@ public class Receiver {
             });
 
         }).onFailure(throwable -> {
-            log.error(throwable.getMessage(), throwable);
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, throwable.getMessage());
+            if (ERROR_COUNTER >= 5) {
+                log.error(throwable.getMessage(), throwable);
+                throw new ResponseStatusException(INTERNAL_SERVER_ERROR, messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION));
+            }
+            Try.run(() -> {
+                log.warn(messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION));
+                ERROR_COUNTER++;
+                Thread.sleep(SECONDS.toMillis(10));
+                receive();
+            });
+
         });
 
     }

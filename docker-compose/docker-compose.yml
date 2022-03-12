@@ -48,9 +48,5 @@ services:
         condition: service_healthy
       rabbit_mq:
         condition: service_started
-    command:
-      - '/bin/sh'
-      - '-c'
-      - '/bin/sleep 45 && /prog "first argument"'
     environment:
       - SPRING_PROFILES_ACTIVE=local
