@@ -51,6 +51,6 @@ services:
     command:
       - '/bin/sh'
       - '-c'
-      - '/bin/sleep 30 && /prog "first argument"'
+      - '/bin/sleep 45 && /prog "first argument"'
     environment:
       - SPRING_PROFILES_ACTIVE=local
