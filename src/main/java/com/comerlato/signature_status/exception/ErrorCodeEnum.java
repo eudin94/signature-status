@@ -14,7 +14,8 @@ public enum ErrorCodeEnum {
     ERROR_SUBSCRIPTION_ALREADY_EXISTS("error.subscription.already.exists"),
     ERROR_SUBSCRIPTION_NOT_FOUND("error.subscription.not.found"),
     ERROR_EVENT_NOT_FOUND("error.event.not.found"),
-    ERROR_UNCHANGED_STATUS("error.unchanged.status");
+    ERROR_UNCHANGED_STATUS("error.unchanged.status"),
+    ERROR_MESSAGE_QUEUE_CONNECTION("error.message.queue.connection");
 
     private final String messageKey;
 }

@@ -24,10 +24,17 @@ spring:
     enabled: true
     default-schema: public
     liquibase-schema: public
-    url: ${spring.datasource.url}
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:3210/signature_status?currentSchema=public}
+    user: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:123}
     change-log: db.changelog/db.changelog-master.yaml
+  rabbitmq:
+    host: ${CLOUD_AMQP_HOST:localhost}
+    port: ${CLOUDAMQP_PORT:5672}
+    username: ${CLOUDAMQP_USERNAME:guest}
+    password: ${CLOUDAMQP_PASSWORD:guest}
+    uri: ${CLOUDAMQP_URL:amqp://guest:guest@localhost}
+    queue: ${CLOUDAMQP_QUEUE:NOTIFICATION_QUEUE}
   application.name: voting-challenge
   web:
     locale: pt_BR
@@ -41,7 +48,7 @@ springdoc:
   api-docs:
     enabled: true
   swagger-ui:
-    server.list: ${SPRINGDOC_SWAGGER-UI_SERVER_LIST} # deployed swagger
+    server.list: ${SPRINGDOC_SWAGGER-UI_SERVER_LIST}
     enabled: true
     doc-expansion: none
     operations-sorter: alpha
@@ -54,7 +61,3 @@ springdoc:
 api:
   standard-error:
     trace: false
-mq:
-  amqp:
-    uri: ${CLOUDAMQP_URL:amqp://guest:guest@localhost}
-    queue: ${CLOUDAMQP_QUEUE:NOTIFICATION_QUEUE}

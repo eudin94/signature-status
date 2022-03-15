@@ -1,0 +1,52 @@
+version: '3.1'
+
+services:
+
+  rabbit_mq:
+    container_name: ss_mq
+    hostname: ss_mq
+    image: library/rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ~/.docker-conf/rabbit_mq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbit_mq/log/:/var/log/rabbitmq
+    healthcheck:
+      test: [ "CMD-SHELL", "mq_isready" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  postgres_db:
+    container_name: ss_db
+    image: library/postgres:13
+    restart: always
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "signature_status"
+    ports:
+      - "3210:5432"
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  signature_status_api:
+    container_name: ss_api
+    image: eduardomc94/signature-status
+    network_mode: "host"
+    restart: on-failure
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+      rabbit_mq:
+        condition: service_started
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
