@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.PostConstruct;
 
 import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
+import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_MANAGING_SUBSCRIPTION;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_MESSAGE_QUEUE_CONNECTION;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -61,7 +62,7 @@ public class Receiver {
         }).onFailure(throwable -> {
             ERROR_COUNTER++;
             if (ERROR_COUNTER >= 5) {
-                log.error(throwable.getMessage(), throwable);
+                log.error(messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, "Service is unavailable"));
                 throw new ResponseStatusException(INTERNAL_SERVER_ERROR,
                         messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, "Service is unavailable"));
             }
@@ -95,9 +96,9 @@ public class Receiver {
             }
 
         }).onFailure(throwable -> {
-            log.error(throwable.getMessage());
+            log.error(messageHelper.get(ERROR_MANAGING_SUBSCRIPTION, throwable.getMessage()));
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR,
-                    messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, throwable.getMessage()));
+                    messageHelper.get(ERROR_MANAGING_SUBSCRIPTION, throwable.getMessage()));
         });
     }
 }

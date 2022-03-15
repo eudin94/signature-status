@@ -15,7 +15,12 @@ public enum ErrorCodeEnum {
     ERROR_SUBSCRIPTION_NOT_FOUND("error.subscription.not.found"),
     ERROR_EVENT_NOT_FOUND("error.event.not.found"),
     ERROR_UNCHANGED_STATUS("error.unchanged.status"),
-    ERROR_MESSAGE_QUEUE_CONNECTION("error.message.queue.connection");
+    ERROR_MESSAGE_QUEUE_CONNECTION("error.message.queue.connection"),
+    ERROR_MESSAGE_QUEUE_URI("error.message.queue.uri"),
+    ERROR_MESSAGE_QUEUE_SEND("error.message.queue.send"),
+    ERROR_UPLOADING_FILE("error.uploading.file"),
+    ERROR_INVALID_FILE_FORMAT("error.invalid.file.format"),
+    ERROR_MANAGING_SUBSCRIPTION("error.managing.subscription");
 
     private final String messageKey;
 }
