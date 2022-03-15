@@ -1,7 +1,6 @@
 package com.comerlato.signature_status.component.mq;
 
 import com.comerlato.signature_status.enums.EventTypeEnum;
-import com.comerlato.signature_status.exception.ErrorCodeEnum;
 import com.comerlato.signature_status.helper.MessageHelper;
 import com.comerlato.signature_status.service.SubscriptionService;
 import com.rabbitmq.client.Channel;
@@ -59,13 +58,14 @@ public class Receiver {
             });
 
         }).onFailure(throwable -> {
+            ERROR_COUNTER++;
             if (ERROR_COUNTER >= 5) {
                 log.error(throwable.getMessage(), throwable);
-                throw new ResponseStatusException(INTERNAL_SERVER_ERROR, messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION));
+                throw new ResponseStatusException(INTERNAL_SERVER_ERROR,
+                        messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, 5 - ERROR_COUNTER));
             }
             Try.run(() -> {
-                log.warn(messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION));
-                ERROR_COUNTER++;
+                log.warn(messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, 5 - ERROR_COUNTER));
                 Thread.sleep(SECONDS.toMillis(10));
                 receive();
             });
@@ -94,7 +94,8 @@ public class Receiver {
 
         }).onFailure(throwable -> {
             log.error(throwable.getMessage());
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, throwable.getMessage());
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION));
+            //TODO IMPROVE ERROR MESSAGE
         });
     }
 }
