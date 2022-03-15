@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 
 import static com.comerlato.signature_status.enums.EventTypeEnum.SUBSCRIPTION_PURCHASED;
 import static com.comerlato.signature_status.exception.ErrorCodeEnum.ERROR_MESSAGE_QUEUE_CONNECTION;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -62,11 +63,12 @@ public class Receiver {
             if (ERROR_COUNTER >= 5) {
                 log.error(throwable.getMessage(), throwable);
                 throw new ResponseStatusException(INTERNAL_SERVER_ERROR,
-                        messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, 5 - ERROR_COUNTER));
+                        messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, "Service is unavailable"));
             }
             Try.run(() -> {
-                log.warn(messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, 5 - ERROR_COUNTER));
-                Thread.sleep(SECONDS.toMillis(10));
+                log.warn(messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION,
+                        format("Retries left: %d", 5 - ERROR_COUNTER)));
+                Thread.sleep(SECONDS.toMillis(15));
                 receive();
             });
 
@@ -94,8 +96,8 @@ public class Receiver {
 
         }).onFailure(throwable -> {
             log.error(throwable.getMessage());
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION));
-            //TODO IMPROVE ERROR MESSAGE
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR,
+                    messageHelper.get(ERROR_MESSAGE_QUEUE_CONNECTION, throwable.getMessage()));
         });
     }
 }

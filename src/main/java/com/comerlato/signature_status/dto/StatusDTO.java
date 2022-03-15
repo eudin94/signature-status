@@ -14,4 +14,9 @@ public class StatusDTO {
 
     Long id;
     StatusEnum name;
+
+    @Override
+    public String toString() {
+        return "ID = " + id + " - NAME = " + name;
+    }
 }
