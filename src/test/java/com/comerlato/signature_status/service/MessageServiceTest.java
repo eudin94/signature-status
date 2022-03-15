@@ -1,10 +1,12 @@
 package com.comerlato.signature_status.service;
 
+import com.comerlato.signature_status.helper.MessageHelper;
 import com.rabbitmq.client.ConnectionFactory;
 import io.vavr.control.Try;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,6 +31,8 @@ public class MessageServiceTest {
 
     @InjectMocks
     private MessageService service;
+    @Mock
+    private MessageHelper messageHelper;
 
     private static final String queueName = "TEST_QUEUE";
     private static final String uri = "amqp://guest:guest@localhost";
@@ -39,6 +43,7 @@ public class MessageServiceTest {
         ReflectionTestUtils.setField(service, "URI", uri, String.class);
 
         Try.run(() -> when(file.getInputStream()).thenReturn(inputStream));
+        when(file.getContentType()).thenReturn("text/csv");
 
         assertDoesNotThrow(() -> service.upload(file));
     }
