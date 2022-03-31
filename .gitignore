@@ -5,6 +5,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+signature-status_docker-compose/initdb
+
 ### STS ###
 .apt_generated
 .classpath
