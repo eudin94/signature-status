@@ -1,1 +1,0 @@
-curl -X POST "http://localhost:8095/api/signature-status/message" -H  "accept: */*" -H  "Content-Type: multipart/form-data" -F "file=@notifications.csv;type=text/csv"

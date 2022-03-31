@@ -64,6 +64,7 @@ services:
         condition: service_healthy
       rabbit_mq:
         condition: service_started
+    command: /bin/sh -c "notifications.sh"
     environment:
       - SPRING_PROFILES_ACTIVE=container
 
