@@ -95,10 +95,6 @@ public class Receiver {
                 log.info("\nSubscription has been updated:\n" + updatedSubscription.toString());
             }
 
-        }).onFailure(throwable -> {
-            log.error(messageHelper.get(ERROR_MANAGING_SUBSCRIPTION, throwable.getMessage()));
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR,
-                    messageHelper.get(ERROR_MANAGING_SUBSCRIPTION, throwable.getMessage()));
-        });
+        }).onFailure(throwable -> log.error(messageHelper.get(ERROR_MANAGING_SUBSCRIPTION, throwable.getMessage())));
     }
 }
