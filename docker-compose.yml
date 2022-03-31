@@ -58,6 +58,7 @@ services:
     networks:
       ss:
         ipv4_address: 10.5.0.7
+      default:
     depends_on:
       postgres_db:
         condition: service_healthy
