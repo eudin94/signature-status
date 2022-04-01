@@ -17,10 +17,10 @@ services:
       - ~/.docker-conf/rabbit_mq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbit_mq/log/:/var/log/rabbitmq
     healthcheck:
-      test: [ "CMD-SHELL", "mq_isready" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      test: rabbitmq-plugins -q is_enabled rabbitmq_management_agent
+      interval: 15s
+      timeout: 30s
+      retries: 4
 
   postgres_db:
     container_name: ss_db
@@ -63,8 +63,7 @@ services:
       postgres_db:
         condition: service_healthy
       rabbit_mq:
-        condition: service_started
-    command: /bin/sh -c "notifications.sh"
+        condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=container
 
