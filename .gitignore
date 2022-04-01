@@ -5,7 +5,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-signature-status_docker-compose/initdb
+initdb/
 
 ### STS ###
 .apt_generated
