@@ -42,7 +42,7 @@ public class StatusResource {
 
     @GetMapping("/{id}")
     @ResponseStatus(OK)
-    @Operation(summary = "Find all status", responses = {@ApiResponse(responseCode = "200")})
+    @Operation(summary = "Find status by id", responses = {@ApiResponse(responseCode = "200")})
     public StatusDTO findDTOById(@PathVariable final Long id) {
         return service.findDTOById(id);
     }
