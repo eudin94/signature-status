@@ -20,7 +20,7 @@ services:
       test: rabbitmq-plugins -q is_enabled rabbitmq_management_agent
       interval: 15s
       timeout: 30s
-      retries: 4
+      retries: 120
 
   postgres_db:
     container_name: ss_db

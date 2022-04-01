@@ -26,6 +26,8 @@ bash start-ubuntu.sh
 
 <h2>3. Aguarde alguns momentos. O docker irá iniciar a aplicação quando o RabbitMQ estiver pronto e a chamada para a API
 só ira rodar quando a rota estiver disponível.</h2>
+<h6>Observação: *Testei a aplicação em um desktop com hdd e o RabbitMQ levou cerca de 30 minutos para ficar pronto.
+No caso de ocorrer o mesmo em outras máquinas eu coloquei um timeout longo para o healthcheck do serviço.* </h6>
 
 <h2>4. Seu navegador abrirá o swagger na rota em que podemos listar o histórico de eventos salvos das transações. Será
 possível filtrar por tipo de evento ou id e ajustar a paginação.</h2>
