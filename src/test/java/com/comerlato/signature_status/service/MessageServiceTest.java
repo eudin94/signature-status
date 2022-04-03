@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import io.vavr.control.Try;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.when;
@@ -40,6 +42,10 @@ public class MessageServiceTest {
     private static final String queueName = "TEST_QUEUE";
     private static final String uri = "amqp://guest:guest@localhost";
 
+    @BeforeEach
+    void setUp() {
+    }
+
     @Test
     void upload_receivesCSVFile_sendsMessage_whenSuccessful() {
         ReflectionTestUtils.setField(service, "QUEUE_NAME", queueName, String.class);
@@ -48,9 +54,8 @@ public class MessageServiceTest {
         var connection = mock(Connection.class);
         var channel = mock(Channel.class);
 
-        mockConstruction(
-                ConnectionFactory.class, (factory, context) -> when(factory.newConnection()).thenReturn(connection)
-        );
+        var construction = mockConstruction(ConnectionFactory.class,
+                (factory, context) -> when(factory.newConnection()).thenReturn(connection));
 
         Try.run(() -> {
             when(file.getInputStream()).thenReturn(inputStream);
@@ -60,6 +65,7 @@ public class MessageServiceTest {
         });
 
         assertDoesNotThrow(() -> service.upload(file));
+        construction.close();
     }
 
     @Test
@@ -72,32 +78,37 @@ public class MessageServiceTest {
 
     @Test
     void sendMessage_returns500_whenUriIsInvalid() {
+        ReflectionTestUtils.setField(service, "URI", uri, String.class);
+        var construction = mockConstruction(ConnectionFactory.class,
+                (factory, context) -> doThrow(ResponseStatusException.class).when(factory).setUri(uri));
+
         final var status = assertThrows(ResponseStatusException.class,
                 () -> service.sendMessage(message)).getStatus();
 
         assertEquals(INTERNAL_SERVER_ERROR, status);
+        construction.close();
     }
 
     @Test
     void sendMessage_returns500_whenMessageQueueFails() {
-        try (final var mockedConstructor = mockConstruction(ConnectionFactory.class,
-                (mock, context) -> {
-                    doNothing().when(mock).setUri(uri);
-                    when(mock.newConnection()).thenReturn(connection);
-                })) {
+        var construction = mockConstruction(ConnectionFactory.class,
+                (factory, context) -> {
+                    doNothing().when(factory).setUri(uri);
+                    when(factory.newConnection()).thenReturn(connection);
+                });
 
-            ReflectionTestUtils.setField(service, "QUEUE_NAME", queueName, String.class);
-            ReflectionTestUtils.setField(service, "URI", uri, String.class);
+        ReflectionTestUtils.setField(service, "QUEUE_NAME", queueName, String.class);
+        ReflectionTestUtils.setField(service, "URI", uri, String.class);
 
+        Try.run(() -> {
             when(connection.createChannel()).thenReturn(channel);
             when(channel.queueDeclare(queueName, false, false, false, null)).thenThrow(new IOException());
+        });
 
-            final var status = assertThrows(ResponseStatusException.class,
-                    () -> service.sendMessage(message)).getStatus();
+        final var status = assertThrows(ResponseStatusException.class,
+                () -> service.sendMessage(message)).getStatus();
 
-            assertEquals(INTERNAL_SERVER_ERROR, status);
-
-        } catch (Exception ignored) {
-        }
+        assertEquals(INTERNAL_SERVER_ERROR, status);
+        construction.close();
     }
 }
