@@ -1,6 +1,8 @@
 package com.comerlato.signature_status.service;
 
 import com.comerlato.signature_status.helper.MessageHelper;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import io.vavr.control.Try;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -42,8 +45,19 @@ public class MessageServiceTest {
         ReflectionTestUtils.setField(service, "QUEUE_NAME", queueName, String.class);
         ReflectionTestUtils.setField(service, "URI", uri, String.class);
 
-        Try.run(() -> when(file.getInputStream()).thenReturn(inputStream));
-        when(file.getContentType()).thenReturn("text/csv");
+        var connection = mock(Connection.class);
+        var channel = mock(Channel.class);
+
+        mockConstruction(
+                ConnectionFactory.class, (factory, context) -> when(factory.newConnection()).thenReturn(connection)
+        );
+
+        Try.run(() -> {
+            when(file.getInputStream()).thenReturn(inputStream);
+            when(file.getContentType()).thenReturn("text/csv");
+            when(connection.createChannel()).thenReturn(channel);
+
+        });
 
         assertDoesNotThrow(() -> service.upload(file));
     }
