@@ -1,3 +1,0 @@
-springdoc:
-  swagger-ui:
-    server.list: ${SPRINGDOC_SWAGGER-UI_SERVER_LIST:http://localhost:8095/api/signature_status}
