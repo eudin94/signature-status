@@ -10,17 +10,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks:
-      ss:
-        ipv4_address: 10.5.0.5
     volumes:
       - ~/.docker-conf/rabbit_mq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbit_mq/log/:/var/log/rabbitmq
-    healthcheck:
-      test: rabbitmq-plugins -q is_enabled rabbitmq_management_agent
-      interval: 15s
-      timeout: 30s
-      retries: 160
 
   postgres_db:
     container_name: ss_db
@@ -33,44 +25,5 @@ services:
       POSTGRES_DB: "signature_status"
     ports:
       - "3210:5432"
-    networks:
-      ss:
-        ipv4_address: 10.5.0.6
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d/
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  signature_status_api:
-    container_name: ss_api
-    image: eduardomc94/signature-status
-    restart: on-failure
-    links:
-      - "rabbit_mq:ss_mq"
-      - "postgres_db:ss_db"
-    ports:
-      - "8095:8095"
-    expose:
-      - 8095
-    networks:
-      ss:
-        ipv4_address: 10.5.0.7
-      default:
-    depends_on:
-      postgres_db:
-        condition: service_healthy
-      rabbit_mq:
-        condition: service_healthy
-    environment:
-      - SPRING_PROFILES_ACTIVE=container
-
-networks:
-  ss:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
-          gateway: 10.5.0.1
